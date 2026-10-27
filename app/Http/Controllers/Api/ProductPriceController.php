@@ -9,12 +9,27 @@ use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
+use OpenApi\Attributes as OA;
+
+#[OA\Tag(name: 'Precios de Productos', description: 'Endpoints para la gestión de precios en diferentes divisas')]
 class ProductPriceController extends Controller
 {
     /**
      * Get list of prices for a specific product.
      * GET /products/{id}/prices
      */
+    #[OA\Get(
+        path: '/api/products/{id}/prices',
+        summary: 'Obtener lista de precios de un producto en diferentes divisas',
+        tags: ['Precios de Productos'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, description: 'ID del producto', schema: new OA\Schema(type: 'integer'))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Lista de precios obtenida exitosamente'),
+            new OA\Response(response: 404, description: 'Producto no encontrado')
+        ]
+    )]
     public function index(string $productId): AnonymousResourceCollection
     {
         $product = Product::findOrFail($productId);
@@ -27,6 +42,29 @@ class ProductPriceController extends Controller
      * Store or update a price for a specific product in a given currency.
      * POST /products/{id}/prices
      */
+    #[OA\Post(
+        path: '/api/products/{id}/prices',
+        summary: 'Registrar o actualizar el precio de un producto en una divisa',
+        tags: ['Precios de Productos'],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, description: 'ID del producto', schema: new OA\Schema(type: 'integer'))
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['currency_id', 'price'],
+                properties: [
+                    new OA\Property(property: 'currency_id', type: 'integer', example: 2),
+                    new OA\Property(property: 'price', type: 'number', format: 'float', example: 95.50)
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Precio registrado/actualizado exitosamente'),
+            new OA\Response(response: 404, description: 'Producto no encontrado'),
+            new OA\Response(response: 422, description: 'Errores de validación')
+        ]
+    )]
     public function store(StoreProductPriceRequest $request, string $productId): JsonResponse
     {
         $product = Product::findOrFail($productId);

@@ -40,7 +40,12 @@ API desarrollada con **Laravel 12** y **Eloquent ORM** para la gestión de produ
    ```
    La API quedará escuchando en `http://127.0.0.1:8000`.
 
-4. **Ejecutar pruebas automatizadas**:
+4. **Acceder a la interfaz interactiva de Swagger UI**:
+   Abre en tu navegador:
+   👉 **`http://127.0.0.1:8000/api/documentation`**
+   *(Aquí podrás probar todos los endpoints interactivamente con el botón "Try it out" directo en el navegador)*.
+
+5. **Ejecutar pruebas automatizadas**:
    ```bash
    php artisan test
    ```
